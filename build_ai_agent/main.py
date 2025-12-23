@@ -2,6 +2,7 @@ import os
 from dotenv import load_dotenv
 from google import genai
 import argparse
+from prompts import system_prompt
 
 load_dotenv()
 api_key = os.environ.get("GEMINI_API_KEY")
@@ -18,7 +19,9 @@ def main():
 
     messages = [genai.types.Content(role="user", parts=[genai.types.Part(text=args.prompt)])]
 
-    response = client.models.generate_content(model="gemini-2.5-flash", contents=messages)
+    response = client.models.generate_content(model="gemini-2.5-flash", 
+                                             contents=messages,
+                                             config=genai.types.GenerateContentConfig(system_instruction=system_prompt))
     if args.verbose:
         print(f"User prompt: {args.prompt}")
         print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
