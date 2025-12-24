@@ -1,5 +1,6 @@
 import os
 from config import MAX_CHARS
+from google import genai
 
 def write_file(working_directory, file_path, content):
     try:
@@ -23,3 +24,23 @@ def write_file(working_directory, file_path, content):
 
     except Exception as e:
         return f'Error: {e}'
+
+
+schema_write_file = genai.types.FunctionDeclaration(
+    name="write_file",
+    description="Writes content to a file relative to the working directory",
+    parameters=genai.types.Schema(
+        type=genai.types.Type.OBJECT,
+        properties={
+            "file_path": genai.types.Schema(
+                type=genai.types.Type.STRING,
+                description="File path to write to, relative to the working directory",
+            ),
+            "content": genai.types.Schema(
+                type=genai.types.Type.STRING,
+                description="Content to write to the file",
+            ),
+        },
+        required=["file_path", "content"],
+    ),
+)

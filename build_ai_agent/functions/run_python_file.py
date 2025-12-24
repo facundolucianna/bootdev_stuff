@@ -1,5 +1,6 @@
 import os
 import subprocess
+from google import genai
 
 def run_python_file(working_directory, file_path, args=None):
     try:
@@ -32,7 +33,7 @@ def run_python_file(working_directory, file_path, args=None):
 
         if not stdout and not stderr:
             output += "No output produced"
-            
+
         if stdout:
             output += f"STDOUT: {stdout}"
 
@@ -43,3 +44,27 @@ def run_python_file(working_directory, file_path, args=None):
 
     except Exception as e:
         return f"Error: executing Python file: {e}"
+
+
+schema_run_python_file = genai.types.FunctionDeclaration(
+    name="run_python_file",
+    description="Runs a Python file relative to the working directory",
+    parameters=genai.types.Schema(
+        type=genai.types.Type.OBJECT,
+        properties={
+            "file_path": genai.types.Schema(
+                type=genai.types.Type.STRING,
+                description="File path to run, relative to the working directory",
+            ),
+            "args": genai.types.Schema(
+                type=genai.types.Type.ARRAY,
+                items=genai.types.Schema(
+                    type=genai.types.Type.STRING,
+                    description="Optional arguments to pass to the Python file",
+                ),
+                description="Optional arguments to pass to the Python file",
+            ),
+        },
+        required=["file_path"],
+    ),
+)
