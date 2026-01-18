@@ -1,8 +1,7 @@
 import unittest
 
 from textnode import TextNode, TextType
-from convertfunc import text_node_to_html_node, split_nodes_delimiter
-
+from convertfunc import text_node_to_html_node, split_nodes_delimiter, extract_markdown_images, extract_markdown_links
 class TestNodeToHtml(unittest.TestCase):
     def test_text(self):
         node = TextNode("This is a text node", TextType.TEXT)
@@ -83,6 +82,39 @@ class TestSplitNodesDelimiter(unittest.TestCase):
         with self.assertRaises(ValueError):
             nodes = TextNode("This _is a text node", TextType.TEXT)
             split_nodes_delimiter([nodes], "_", TextType.ITALIC)
+
+
+class TestExtractMarkdownImages(unittest.TestCase):
+    def test_extract_markdown_images(self):
+        text = "This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)"
+        images = extract_markdown_images(text)
+        self.assertEqual(images, [("rick roll", "https://i.imgur.com/aKaOqIh.gif"), ("obi wan", "https://i.imgur.com/fJRm4Vk.jpeg")])
+
+    def test_extract_markdown_images_no_images(self):
+        text = "This is text with no images"
+        images = extract_markdown_images(text)
+        self.assertEqual(images, [])
+
+    def test_extract_markdown_no_imagen_but_link(self):
+        text = "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)"
+        images = extract_markdown_images(text)
+        self.assertEqual(images, [])
+
+class TestExtractMarkdownLinks(unittest.TestCase):
+    def test_extract_markdown_links(self):
+        text = "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)"
+        links = extract_markdown_links(text)
+        self.assertEqual(links, [("to boot dev", "https://www.boot.dev"), ("to youtube", "https://www.youtube.com/@bootdotdev")])
+
+    def test_extract_markdown_links_no_links(self):
+        text = "This is text with no links"
+        links = extract_markdown_links(text)
+        self.assertEqual(links, [])
+
+    def test_extract_markdown_links_no_links_but_image(self):
+        text = "This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)"
+        links = extract_markdown_links(text)
+        self.assertEqual(links, [])
 
 if __name__ == "__main__":
     unittest.main()
