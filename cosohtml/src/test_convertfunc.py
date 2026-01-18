@@ -1,7 +1,14 @@
 import unittest
 
 from textnode import TextNode, TextType
-from convertfunc import text_node_to_html_node, split_nodes_delimiter, extract_markdown_images, extract_markdown_links
+from convertfunc import (text_node_to_html_node, 
+                         split_nodes_delimiter, 
+                         extract_markdown_images, 
+                         extract_markdown_links, 
+                         split_nodes_image, 
+                         split_nodes_link)
+
+
 class TestNodeToHtml(unittest.TestCase):
     def test_text(self):
         node = TextNode("This is a text node", TextType.TEXT)
@@ -115,6 +122,89 @@ class TestExtractMarkdownLinks(unittest.TestCase):
         text = "This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)"
         links = extract_markdown_links(text)
         self.assertEqual(links, [])
+
+
+class TestSplitNodesImage(unittest.TestCase):
+    def test_split_nodes_image(self):
+
+        node = TextNode(
+        "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png) and another ![second image](https://i.imgur.com/3elNhQu.png) and  ![image](https://i.imgur.com/zjjcJKZ.png) mama",
+        TextType.TEXT,
+        )
+        node2 = TextNode(
+        "![image](https://i.imgur.com/zjjcJKZ.png) and another ![second image](https://i.imgur.com/3elNhQu.png) and  ![image](https://i.imgur.com/zjjcJKZ.png) mama",
+        TextType.TEXT,
+        )
+        node3 = TextNode(
+        "![image](https://i.imgur.com/zjjcJKZ.png)",
+        TextType.TEXT,
+        )
+        node4 = TextNode(
+        "![image](https://i.imgur.com/zjjcJKZ.png) mamita",
+        TextType.TEXT,
+        )   
+
+        new_nodes = split_nodes_image([node, node2, node3, node4])
+        
+        expected_nodes = [
+            TextNode("This is text with an ", TextType.TEXT),
+            TextNode("image", TextType.IMAGE, url="https://i.imgur.com/zjjcJKZ.png"),
+            TextNode(" and another ", TextType.TEXT),
+            TextNode("second image", TextType.IMAGE, url="https://i.imgur.com/3elNhQu.png"),
+            TextNode(" and ", TextType.TEXT),
+            TextNode("image", TextType.IMAGE, url="https://i.imgur.com/zjjcJKZ.png"),
+            TextNode(" mama", TextType.TEXT),
+            TextNode("image", TextType.IMAGE, url="https://i.imgur.com/zjjcJKZ.png"),
+            TextNode(" and another ", TextType.TEXT),
+            TextNode("second image", TextType.IMAGE, url="https://i.imgur.com/3elNhQu.png"),
+            TextNode(" and ", TextType.TEXT),
+            TextNode("image", TextType.IMAGE, url="https://i.imgur.com/zjjcJKZ.png"),
+            TextNode(" mama", TextType.TEXT),
+            TextNode("image", TextType.IMAGE, url="https://i.imgur.com/zjjcJKZ.png"),
+            TextNode("image", TextType.IMAGE, url="https://i.imgur.com/zjjcJKZ.png"),
+            TextNode(" mamita", TextType.TEXT),
+
+        ]
+        self.assertEqual(new_nodes, expected_nodes)
+
+
+class TestSplitNodesLink(unittest.TestCase):
+    def test_split_nodes_link(self):
+        node = TextNode(
+        "This is text with a [link](https://www.boot.dev) and another [second link](https://www.youtube.com/@bootdotdev)",
+        TextType.TEXT,
+        )
+        node2 = TextNode(
+        "[link](https://www.boot.dev) and another [second link](https://www.youtube.com/@bootdotdev) mama",
+        TextType.TEXT,
+        )
+        node3 = TextNode(
+        "[link](https://www.boot.dev)",
+        TextType.TEXT,
+        )
+        node4 = TextNode(
+        "[link](https://www.boot.dev) mamita",
+        TextType.TEXT,
+        )   
+
+        new_nodes = split_nodes_link([node, node2, node3, node4])
+        
+        expected_nodes = [
+            TextNode("This is text with a ", TextType.TEXT),
+            TextNode("link", TextType.LINK, url="https://www.boot.dev"),
+            TextNode(" and another ", TextType.TEXT),
+            TextNode("second link", TextType.LINK, url="https://www.youtube.com/@bootdotdev"),
+            TextNode("link", TextType.LINK, url="https://www.boot.dev"),
+            TextNode(" and another ", TextType.TEXT),
+            TextNode("second link", TextType.LINK, url="https://www.youtube.com/@bootdotdev"),
+            TextNode(" mama", TextType.TEXT),
+            TextNode("link", TextType.LINK, url="https://www.boot.dev"),
+            TextNode("link", TextType.LINK, url="https://www.boot.dev"),
+            TextNode(" mamita", TextType.TEXT),
+
+        ]
+        self.assertEqual(new_nodes, expected_nodes)
+
 
 if __name__ == "__main__":
     unittest.main()
