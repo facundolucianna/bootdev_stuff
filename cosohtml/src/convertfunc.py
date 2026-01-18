@@ -22,6 +22,18 @@ def text_node_to_html_node(text_node: TextNode) -> LeafNode:
             raise ValueError(f"Invalid text type: {text_node.text_type}")
 
 
+def extract_markdown_images(text: str) -> list[tuple[str, str]]:
+    pattern = r"!\[([^\]]*)\]\(([^)]*)\)"
+    matches = re.findall(pattern, text)
+    return matches
+
+
+def extract_markdown_links(text: str) -> list[tuple[str, str]]:
+    pattern = r"(?<!\!)\[([^\]]*)\]\(([^)]*)\)"
+    matches = re.findall(pattern, text)
+    return matches
+
+
 def split_nodes_delimiter(old_nodes: list[TextNode], delimiter: str, text_type: TextType) -> list[TextNode]:
     new_nodes = []
     for node in old_nodes:
@@ -41,15 +53,3 @@ def split_nodes_delimiter(old_nodes: list[TextNode], delimiter: str, text_type: 
             new_nodes.append(node)
 
     return new_nodes
-
-
-def extract_markdown_images(text: str) -> list[tuple[str, str]]:
-    pattern = r"!\[([^\]]*)\]\(([^)]*)\)"
-    matches = re.findall(pattern, text)
-    return matches
-
-
-def extract_markdown_links(text: str) -> list[tuple[str, str]]:
-    pattern = r"(?<!\!)\[([^\]]*)\]\(([^)]*)\)"
-    matches = re.findall(pattern, text)
-    return matches
