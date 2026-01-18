@@ -6,7 +6,8 @@ from convertfunc import (text_node_to_html_node,
                          extract_markdown_images, 
                          extract_markdown_links, 
                          split_nodes_image, 
-                         split_nodes_link)
+                         split_nodes_link,
+                         text_to_textnodes)
 
 
 class TestNodeToHtml(unittest.TestCase):
@@ -205,6 +206,22 @@ class TestSplitNodesLink(unittest.TestCase):
         ]
         self.assertEqual(new_nodes, expected_nodes)
 
+class TestSplitText(unittest.TestCase):
+    def test_split_text(self):
+        text = "This is _text with_ an [link](https://i.imgur.com/zjjcJKZ.png) and another ![image](https://i.imgur.com/3elNhQu.png) **mama**"
+
+        output = [
+            TextNode("This is ", TextType.TEXT),
+            TextNode("text with", TextType.ITALIC),
+            TextNode(" an", TextType.TEXT),
+            TextNode("link", TextType.LINK, url="https://i.imgur.com/zjjcJKZ.png"),
+            TextNode(" and another", TextType.TEXT),
+            TextNode("image", TextType.IMAGE, url="https://i.imgur.com/3elNhQu.png"),
+            TextNode("mama", TextType.BOLD),
+        ]
+
+        nodes = text_to_textnodes(text)
+        self.assertEqual(nodes, output)
 
 if __name__ == "__main__":
     unittest.main()
