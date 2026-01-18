@@ -44,10 +44,10 @@ def split_nodes_delimiter(old_nodes: list[TextNode], delimiter: str, text_type: 
                 continue
             if len(text_split) != 3:
                 raise ValueError(f"Delimeter {delimiter} incomplete")
-            if text_split[0] != "":
+            if text_split[0].strip() != "":
                 new_nodes.append(TextNode(text_split[0].strip() + " ", TextType.TEXT))
             new_nodes.append(TextNode(text_split[1].strip(), text_type))
-            if text_split[2] != "":
+            if text_split[2].strip() != "":
                 new_nodes.append(TextNode(" " + text_split[2].strip(), TextType.TEXT))  
         else:
             new_nodes.append(node)
@@ -115,3 +115,13 @@ def split_nodes_link(old_nodes: list[TextNode]) -> list[TextNode]:
         else:
             new_nodes.append(node)
     return new_nodes
+
+
+def text_to_textnodes(text: str) -> list[TextNode]:
+
+    nodes_after_images = split_nodes_image([TextNode(text, TextType.TEXT)])
+    nodes_after_links = split_nodes_link(nodes_after_images)
+    nodes_after_bold = split_nodes_delimiter(nodes_after_links, "**", TextType.BOLD)
+    nodes_after_italic = split_nodes_delimiter(nodes_after_bold, "_", TextType.ITALIC)
+
+    return nodes_after_italic
