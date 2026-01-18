@@ -1,6 +1,6 @@
 import unittest
 
-from markdownblocks import markdown_to_blocks
+from markdownblocks import markdown_to_blocks, block_to_block_type, BlockType
 
 class TestMarkdownToBlocks(unittest.TestCase):
     def test_markdown_to_blocks(self):
@@ -53,6 +53,45 @@ This is the same paragraph on a new line
         self.assertEqual(blocks, ["This is **bolded** paragraph", 
         "This is another paragraph with _italic_ text and `code` here\nThis is the same paragraph on a new line", 
         "- This is a list\n- with items"])
+
+class TestBlockToBlockType(unittest.TestCase):
+    def test_block_to_block_type_heading(self):
+        block = "# heading"
+        self.assertEqual(block_to_block_type(block), BlockType.HEADING)
+        block = "###### heading"
+        self.assertEqual(block_to_block_type(block), BlockType.HEADING)
+        block = "####### paragraph"
+        self.assertEqual(block_to_block_type(block), BlockType.PARAGRAPH)
+    
+    def test_block_to_block_type_code(self):
+        block = "```\ncode\n```"
+        self.assertEqual(block_to_block_type(block), BlockType.CODE)
+        block = "```code```"
+        self.assertEqual(block_to_block_type(block), BlockType.PARAGRAPH)
+
+    def test_block_to_block_type_quote(self):
+        block = "> quote"
+        self.assertEqual(block_to_block_type(block), BlockType.QUOTE)
+        block = ">quote"
+        self.assertEqual(block_to_block_type(block), BlockType.PARAGRAPH)
+    
+    def test_block_to_block_type_unordered_list(self):
+        block = "- list\n- item"
+        self.assertEqual(block_to_block_type(block), BlockType.UNORDERED_LIST)
+        block = "- list\nitem"
+        self.assertEqual(block_to_block_type(block), BlockType.PARAGRAPH)
+    
+    def test_block_to_block_type_ordered_list(self):
+        block = "1. list\n99898. item"
+        self.assertEqual(block_to_block_type(block), BlockType.ORDERED_LIST)
+        block = "1. list\n3 item"
+        self.assertEqual(block_to_block_type(block), BlockType.PARAGRAPH)
+        
+    def test_block_to_block_type_paragraph(self):
+        block = "paragraph"
+        self.assertEqual(block_to_block_type(block), BlockType.PARAGRAPH)
+        block = "paragraph\nlines"
+        self.assertEqual(block_to_block_type(block), BlockType.PARAGRAPH)
 
 
 if __name__ == "__main__":

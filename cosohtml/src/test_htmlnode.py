@@ -95,6 +95,3 @@ class TestParentNode(unittest.TestCase):
         with self.assertRaises(ValueError):
             node = ParentNode("div", None)
             node.to_html()
-
-       
-    
