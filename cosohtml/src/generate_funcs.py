@@ -31,7 +31,15 @@ def generate_page(from_path: Path, template_path: Path, dest_path: Path):
     new_page = template.replace("{{ Title }}", title).replace("{{ Content }}", html)
 
     dest_path.write_text(new_page)
-    
-    print(title)
-    print(new_page)
+
     print("Done")
+
+
+def generate_pages_recursively(dir_path_content: Path, template_path: Path, dest_dir_path: Path):
+
+    for file in dir_path_content.iterdir():
+        if file.is_file():
+            if file.name.endswith(".md"):
+                generate_page(file, template_path, dest_dir_path / file.name.replace(".md", ".html"))
+        elif file.is_dir():
+            generate_pages_recursively(file, template_path, dest_dir_path / file.name) 
