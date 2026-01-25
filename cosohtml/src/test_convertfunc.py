@@ -213,10 +213,11 @@ class TestSplitText(unittest.TestCase):
         output = [
             TextNode("This is ", TextType.TEXT),
             TextNode("text with", TextType.ITALIC),
-            TextNode(" an", TextType.TEXT),
+            TextNode(" an ", TextType.TEXT),
             TextNode("link", TextType.LINK, url="https://i.imgur.com/zjjcJKZ.png"),
             TextNode(" and another", TextType.TEXT),
             TextNode("image", TextType.IMAGE, url="https://i.imgur.com/3elNhQu.png"),
+            TextNode(" ", TextType.TEXT),
             TextNode("mama", TextType.BOLD),
         ]
 
