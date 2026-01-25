@@ -11,11 +11,11 @@ def main():
     print(f"Using basepath: {basepath}")
 
     print("Copying static files to public directory")
-    clean_and_copy(Path("static"), Path("docs"))
+    clean_and_copy(Path("static"), Path("../docs"))
     print("Done")
 
     print("Generating pages recursively")
-    generate_pages_recursively(Path("content"), Path("template.html"), Path("docs"), basepath)
+    generate_pages_recursively(Path("content"), Path("template.html"), Path("../docs"), basepath)
     print("Done")
 
 main()

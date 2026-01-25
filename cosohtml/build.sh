@@ -1,1 +1,1 @@
-python3 src/main.py "/cosohtml/"
+python3 src/main.py "/bootdev_stuff/"
