@@ -180,4 +180,15 @@ def markdown_to_html_node(markdown):
 
     return ParentNode(tag="div", children=nodes)
             
-        
+
+def extract_title(markdown: str) -> str:
+    
+    obtain_all_lines = markdown.splitlines()
+
+    for line in obtain_all_lines:
+        new_line = line.strip()
+        if re.match(r"^#{1} ", new_line):
+            level = len(re.match(r"^#{1} ", new_line).group(0)) - 1
+            return new_line[level+1:].strip()
+
+    raise ValueError("No heading found in markdown")
