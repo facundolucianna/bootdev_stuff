@@ -118,6 +118,8 @@ def split_nodes_link(old_nodes: list[TextNode]) -> list[TextNode]:
 
 
 def text_to_textnodes(text: str) -> list[TextNode]:
+    if text == "":
+        return []
 
     nodes_after_images = split_nodes_image([TextNode(text, TextType.TEXT)])
     nodes_after_links = split_nodes_link(nodes_after_images)

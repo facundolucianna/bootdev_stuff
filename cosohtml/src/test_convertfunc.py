@@ -224,5 +224,47 @@ class TestSplitText(unittest.TestCase):
         nodes = text_to_textnodes(text)
         self.assertEqual(nodes, output)
 
+    def test_split_text_no_markdown(self):
+        text = "This is just plain text"
+        nodes = text_to_textnodes(text)
+        self.assertEqual(nodes, [TextNode("This is just plain text", TextType.TEXT)])
+    
+    def test_split_text_bold(self):
+        text = "This is **bold** text"
+        nodes = text_to_textnodes(text)
+        self.assertEqual(nodes, [
+            TextNode("This is ", TextType.TEXT),
+            TextNode("bold", TextType.BOLD),
+            TextNode(" text", TextType.TEXT),
+        ])
+
+    def test_split_text_italic(self):
+        text = "This is _italic_ text"
+        nodes = text_to_textnodes(text)
+        self.assertEqual(nodes, [
+            TextNode("This is ", TextType.TEXT),
+            TextNode("italic", TextType.ITALIC),
+            TextNode(" text", TextType.TEXT),
+        ])
+
+    def test_split_text_code(self):
+        text = "This is `code` text"
+        nodes = text_to_textnodes(text)
+        self.assertEqual(nodes, [
+            TextNode("This is ", TextType.TEXT),
+            TextNode("code", TextType.CODE),
+            TextNode(" text", TextType.TEXT),
+        ])
+    
+    def test_split_text_empty(self):
+        text = ""
+        nodes = text_to_textnodes(text)
+        self.assertEqual(nodes, [])
+    
+    def test_split_text_incomplete_markdown(self):
+        text = "This is *not bold or italic* just text"
+        nodes = text_to_textnodes(text)
+        self.assertEqual(nodes, [TextNode(text, TextType.TEXT)])
+
 if __name__ == "__main__":
     unittest.main()
