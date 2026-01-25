@@ -35,7 +35,6 @@ def generate_page(from_path: Path, template_path: Path, dest_path: Path, basepat
 
     dest_path.write_text(new_page)
 
-    print("Done")
 
 
 def generate_pages_recursively(dir_path_content: Path, template_path: Path, dest_dir_path: Path, basepath: str):
