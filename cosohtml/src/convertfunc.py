@@ -39,16 +39,16 @@ def split_nodes_delimiter(old_nodes: list[TextNode], delimiter: str, text_type: 
     for node in old_nodes:
         if node.text_type == TextType.TEXT:
             text_split = node.text.split(delimiter)
-            if len(text_split) == 1:
-                new_nodes.append(node)
-                continue
-            if len(text_split) != 3:
+            if len(text_split) % 2 == 0:
                 raise ValueError(f"Delimeter {delimiter} incomplete")
-            if text_split[0] != "":
-                new_nodes.append(TextNode(text_split[0], TextType.TEXT))
-            new_nodes.append(TextNode(text_split[1], text_type))
-            if text_split[2] != "":
-                new_nodes.append(TextNode(text_split[2], TextType.TEXT))  
+
+            for i in range(len(text_split)):
+                if text_split[i] == "":
+                    continue
+                if i % 2 == 0:
+                    new_nodes.append(TextNode(text_split[i], TextType.TEXT))
+                else:
+                    new_nodes.append(TextNode(text_split[i], text_type))
         else:
             new_nodes.append(node)
 

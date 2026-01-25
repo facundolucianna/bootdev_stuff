@@ -1,6 +1,7 @@
 import unittest
 
-from markdownblocks import markdown_to_blocks, block_to_block_type, BlockType, markdown_to_html_node, extract_title
+from markdownblocks import markdown_to_blocks, block_to_block_type, BlockType, markdown_to_html_node
+from generate_funcs import extract_title
 
 class TestMarkdownToBlocks(unittest.TestCase):
     def test_markdown_to_blocks(self):
@@ -124,6 +125,17 @@ the **same** even with inline stuff
         self.assertEqual(
             html,
             "<div><pre><code>This is text that _should_ remain\nthe **same** even with inline stuff\n</code></pre></div>",
+        )
+
+    def test_paragraphs_multi_inline(self):
+        md = """
+This is a paragraph with `code` and `more code` and **bold** and **more bold**
+"""
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        self.assertEqual(
+            html,
+            "<div><p>This is a paragraph with <code>code</code> and <code>more code</code> and <b>bold</b> and <b>more bold</b></p></div>",
         )
 
 class TestExtractTitle(unittest.TestCase):
